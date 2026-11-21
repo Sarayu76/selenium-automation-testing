@@ -1,8 +1,10 @@
+
 package tests;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -13,7 +15,15 @@ public class BaseTest {
     @BeforeMethod
     public void setUp() {
 
-        driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+
+        if (System.getenv("CI") != null) {
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+        }
+
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
 
         System.out.println("Browser opened!");
@@ -28,7 +38,6 @@ public class BaseTest {
         }
     }
 
-    // Reusable login method
     protected void login() {
 
         driver.get("https://www.saucedemo.com/");
