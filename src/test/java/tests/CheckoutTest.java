@@ -1,3 +1,4 @@
+
 package tests;
 
 import java.time.Duration;
@@ -14,7 +15,7 @@ public class CheckoutTest extends BaseTest {
     public void verifyCheckoutProcess() {
 
         WebDriverWait wait = new WebDriverWait(
-            driver, Duration.ofSeconds(10)
+            driver, Duration.ofSeconds(20)
         );
 
         login();
@@ -23,24 +24,45 @@ public class CheckoutTest extends BaseTest {
             ExpectedConditions.urlContains("inventory.html")
         );
 
-        driver.findElement(
-            By.id("add-to-cart-sauce-labs-backpack")
+        wait.until(
+            ExpectedConditions.elementToBeClickable(
+                By.id("add-to-cart-sauce-labs-backpack")
+            )
         ).click();
 
-        driver.findElement(
-            By.className("shopping_cart_link")
+        wait.until(
+            ExpectedConditions.elementToBeClickable(
+                By.className("shopping_cart_link")
+            )
         ).click();
+
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.className("cart_item")
+            )
+        );
 
         driver.findElement(By.id("checkout")).click();
 
-        driver.findElement(By.id("first-name")).sendKeys("Sarayu");
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.id("first-name")
+            )
+        ).sendKeys("Sarayu");
+
         driver.findElement(By.id("last-name")).sendKeys("E");
         driver.findElement(By.id("postal-code")).sendKeys("639001");
 
         driver.findElement(By.id("continue")).click();
 
         wait.until(
-            ExpectedConditions.elementToBeClickable(By.id("finish"))
+            ExpectedConditions.urlContains("checkout-step-two")
+        );
+
+        wait.until(
+            ExpectedConditions.elementToBeClickable(
+                By.id("finish")
+            )
         ).click();
 
         String confirmation = wait.until(

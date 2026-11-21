@@ -1,6 +1,10 @@
 package tests;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -9,24 +13,37 @@ public class RemoveFromCartTest extends BaseTest {
     @Test
     public void verifyRemoveFromCart() {
 
-        login();
-
-        driver.findElement(
-            By.id("add-to-cart-sauce-labs-backpack")
-        ).click();
-
-        driver.findElement(
-            By.className("shopping_cart_link")
-        ).click();
-
-        Assert.assertTrue(
-            driver.findElement(By.className("cart_item")).isDisplayed(),
-            "Product was not found in cart!"
+        WebDriverWait wait = new WebDriverWait(
+            driver, Duration.ofSeconds(20)
         );
 
-        driver.findElement(
+        login();
+
+        wait.until(ExpectedConditions.urlContains("inventory.html"));
+
+        wait.until(ExpectedConditions.elementToBeClickable(
+            By.id("add-to-cart-sauce-labs-backpack")
+        )).click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.className("shopping_cart_badge")
+        ));
+
+        wait.until(ExpectedConditions.elementToBeClickable(
+            By.className("shopping_cart_link")
+        )).click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.className("cart_item")
+        ));
+
+        wait.until(ExpectedConditions.elementToBeClickable(
             By.id("remove-sauce-labs-backpack")
-        ).click();
+        )).click();
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+            By.className("cart_item")
+        ));
 
         Assert.assertEquals(
             driver.findElements(By.className("cart_item")).size(),
